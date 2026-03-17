@@ -1,45 +1,232 @@
-# Endless Runner Sample game
+# Trash Dash — WebGL Endless Runner с Webhook-интеграцией
 
-_Current Used Unity Version : 2019.3_
+Форк [Unity EndlessRunnerSampleGame](https://github.com/Unity-Technologies/EndlessRunnerSampleGame) с добавленной системой авторизации по deviceHash и вебхуками для отслеживания игровых событий (сбор монет, конец игры).
 
-This repository use tags for versioning. Look in the [Releases](https://github.com/Unity-Technologies/EndlessRunnerSampleGame/releases)
-section to download the source for specific other Unity version, or use git
-tag to checkout a specific version (e.g. `git checkout 18.2`)
+---
 
-## Cloning note
+## Требования
 
-**This repository use git Large File Support.
-To clone it successfully, you will need to install git lfs** :
+| Компонент | Версия | Зачем |
+|-----------|--------|-------|
+| **Unity** | 2021.3.x LTS или 6000.x (Unity 6) | Сборка проекта |
+| **WebGL Build Support** | модуль Unity | Билд под браузер (установить через Unity Hub → Installs → Add Modules) |
+| **Python 3.x** | 3.8+ | Локальный сервер для тестирования |
+| **Браузер** | Chrome / Firefox / Edge (современный) | Запуск WebGL-игры |
+| **Git** | любая версия | Клонирование репозитория |
 
-- Download git lfs here : https://git-lfs.github.com/
-- run `git lfs install` in a command line
+> Unity Hub → Installs → шестерёнка у вашей версии Unity → Add Modules → галочка **WebGL Build Support** → Install
 
-Now you git clone should get the LFS files properly. For support of LFS in Git
-GUI client, please refer to their respective documentation
+---
 
-## Description
+## Быстрый старт
 
-This project is a "endless runner" type mobile game made in Unity
+### 1. Клонировать
 
-You can find [the project on the Unity asset store](https://assetstore.unity.com/packages/essentials/tutorial-projects/endless-runner-sample-game-87901)
-(Note that this is the old version not using Lightweight rendering pipeline & addressable, see note at the end of this file.
-Assets stor version will be updated when Addressable is out of preview)
+```bash
+git clone https://github.com/robertkhairislamov-afk/trashcat_coin.git
+cd trashcat_coin
+```
 
-A INSTRUCTION.txt text file is inside the Asset folder to highlight diverse
-important points of the project
+### 2. Открыть в Unity
 
-An article is available [on the Unity Learn website](https://unity3d.com/learn/tutorials/topics/mobile-touch/trash-dash-code-walkthrough)
-highlighting some part of the code.
+Открыть папку проекта через Unity Hub. При первом открытии Unity мигрирует пакеты — это нормально, подождите.
 
-You can also go visit the [wiki](https://github.com/Unity-Technologies/EndlessRunnerSampleGame/wiki)
-for more in depth details on the projects, how to build it and modify it.
+### 3. Собрать WebGL билд
 
-## Note for this Github version
+**Вариант A — через Unity Editor:**
+1. `File → Build Settings → WebGL → Switch Platform`
+2. Нажать `Build` → выбрать папку `Build/WebGL`
+3. Подождать 5-15 минут
 
-This version include feature not in the released game in the asset store version:
+**Вариант B — через командную строку (headless):**
+```bash
+# Windows
+"C:\Program Files\Unity\Hub\Editor\<версия>\Editor\Unity.exe" ^
+  -batchmode -nographics -quit ^
+  -projectPath . -buildTarget WebGL ^
+  -executeMethod BuildScript.Build ^
+  -logFile build.log
 
-- A basic tutorial when the game is played the first time
-- The use of the new Lightweight Rendering pipeline
-- The use of the new Addressable System that replace the Assets Bundles.
+# macOS/Linux
+/path/to/Unity -batchmode -nographics -quit \
+  -projectPath . -buildTarget WebGL \
+  -executeMethod BuildScript.Build \
+  -logFile build.log
+```
 
-**Documentation is still not up to date in the wiki. Updating is in progress**
+### 4. Настроить эндпоинты бэкенда
+
+Открыть `Build/WebGL/index.html`, добавить **перед** `</head>`:
+
+```html
+<script>
+window.WEBHOOK_CONFIG = {
+    registerEndpoint: 'https://ВАШ-ДОМЕН/register',
+    coinEndpoint:     'https://ВАШ-ДОМЕН/game/coin',
+    gameOverEndpoint: 'https://ВАШ-ДОМЕН/game/over',
+};
+</script>
+```
+
+Если не указать — по умолчанию `https://api.example.com/...` (не будет работать, но игра будет играться).
+
+### 5. Запустить локально
+
+```bash
+cd Build/WebGL
+
+# Терминал 1 — игровой сервер
+python server.py
+# → http://localhost:8080
+
+# Терминал 2 — мок-бэкенд (для тестирования вебхуков)
+python mock_backend.py
+# → слушает на порту 8081, логирует все запросы в консоль
+```
+
+Открыть **http://localhost:8080** в браузере.
+
+### 6. Управление
+
+| Клавиша | Действие |
+|---------|----------|
+| Клик мышкой | Старт игры |
+| ← → | Смена полосы |
+| ↑ | Прыжок |
+| ↓ | Подкат (слайд) |
+
+---
+
+## Как работает Webhook-система
+
+```
+┌─────────────┐     ┌──────────────┐     ┌─────────────┐
+│  Unity C#   │────▶│  WebBridge   │────▶│   Backend   │
+│  GameLogic  │     │   .jslib     │     │   (ваш)     │
+└─────────────┘     └──────────────┘     └─────────────┘
+                          │
+                    ┌─────┴─────┐
+                    │localStorage│
+                    │ (token)    │
+                    └───────────┘
+```
+
+### Поток авторизации
+
+1. При первом запуске генерируется `deviceHash` (GUID, хранится в PlayerPrefs)
+2. `POST /register {hash}` → бэкенд возвращает `{token}`
+3. Token кешируется в `localStorage['trashdash_auth_token']`
+4. Все последующие запросы отправляются с заголовком `Authorization: Bearer <token>`
+5. При ответе 401 — автоматическая перерегистрация и повтор запроса
+6. Retry с exponential backoff (3 попытки: 500мс, 1с, 2с)
+
+### Поток игровых событий
+
+- **Монеты** — батчатся по 10 штук или каждые 3 секунды → `POST /game/coin`
+- **Game Over** — отправляется при смерти персонажа → `POST /game/over`
+- Перед game over — принудительный flush оставшихся монет
+
+---
+
+## Тестирование вебхуков
+
+### С мок-бэкендом (рекомендуется)
+
+Для тестирования без настоящего бэкенда — добавьте в `index.html`:
+
+```html
+<script>
+window.WEBHOOK_CONFIG = {
+    registerEndpoint: 'http://localhost:8081/register',
+    coinEndpoint:     'http://localhost:8081/game/coin',
+    gameOverEndpoint: 'http://localhost:8081/game/over',
+};
+</script>
+```
+
+Запустите `python mock_backend.py` — в терминале увидите:
+
+```
+============================================================
+  REGISTER (new device)
+  hash:  e94ca50e26f14d9792ec2158a004f99d
+  token: tok_aeb1dd8dfd4f4872...
+============================================================
+
+  COINS  | batch #1 | 10 regular + 0 premium = 10 events | total coins: 55
+
+************************************************************
+  GAME OVER #1
+  Score:    624
+  Coins:    306 regular, 0 premium
+  Distance: 608.8m
+  Duration: 61s
+************************************************************
+```
+
+### С webhook.site
+
+См. [QUICK_TEST.md](QUICK_TEST.md) — бесплатный способ без запуска своего сервера.
+
+### В консоли браузера (F12)
+
+```
+[WebBridge] InitAuth hash=a1b2c3d4...
+[WebBridge] Registered, token cached
+[WebBridge] GameOver sent: {"type":"game_over","finalScore":624,...}
+```
+
+---
+
+## Требования к бэкенду
+
+Бэкенд должен реализовать 3 эндпоинта. Подробная спецификация: **[API_SPEC.md](API_SPEC.md)**
+
+| Эндпоинт | Метод | Тело запроса | Ответ |
+|----------|-------|-------------|-------|
+| `/register` | POST | `{hash: "..."}` | `{token: "..."}` |
+| `/game/coin` | POST | `{type:"coin_batch", events:[...]}` | `{ok: true}` |
+| `/game/over` | POST | `{type:"game_over", finalScore, coins, premium, distance, duration}` | `{ok: true}` |
+
+**Обязательно:**
+- CORS: разрешить Origin домена где хостится игра
+- При невалидном/отсутствующем токене вернуть 401
+- Все эндпоинты принимают `Content-Type: application/json`
+
+---
+
+## Деплой на продакшн
+
+1. Собрать WebGL билд
+2. Прописать реальные URL в `index.html` (WEBHOOK_CONFIG)
+3. Залить папку `Build/WebGL/` на хостинг:
+   - **Vercel**: `npx vercel --prod`
+   - **Netlify**: drag-and-drop папки
+   - **VPS/nginx**: скопировать в web root
+
+Для gzip-сжатых билдов хостинг должен отдавать `.gz` файлы с правильными заголовками:
+- `Content-Type: application/wasm` для `.wasm.gz`
+- `Content-Type: application/javascript` для `.js.gz`
+- `Content-Encoding: gzip` для всех `.gz`
+
+---
+
+## Структура добавленных файлов
+
+| Файл | Назначение |
+|------|-----------|
+| `Assets/Plugins/WebGL/WebBridge.jslib` | JS-мост: auth, fetch с retry, батчинг монет |
+| `Assets/Scripts/WebBridge.cs` | C# синглтон-обёртка (авто-создаётся) |
+| `Assets/Editor/BuildWebGL.cs` | Headless билд-скрипт (Addressables + WebGL) |
+| `Build/WebGL/server.py` | Локальный HTTP-сервер для gzip-билдов |
+| `Build/WebGL/mock_backend.py` | Мок-бэкенд для тестирования |
+| `API_SPEC.md` | Спецификация API эндпоинтов |
+| `BUILD_INSTRUCTIONS.md` | Пошаговая инструкция сборки |
+| `QUICK_TEST.md` | Тестирование через webhook.site |
+| `SETUP.md` | Настройка WebBridge и конфигурация |
+
+---
+
+## Лицензия
+
+Оригинальный проект — Unity Technologies.

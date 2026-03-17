@@ -1,8 +1,12 @@
 /[Ll]ibrary/
 /[Tt]emp/
 /[Oo]bj/
-/[Bb]uild/
 /[Bb]uilds/
+# Keep Build/WebGL/server.py and mock_backend.py but ignore actual build output
+/[Bb]uild/WebGL/Build/
+/[Bb]uild/WebGL/StreamingAssets/
+/[Bb]uild/WebGL/TemplateData/
+/[Bb]uild/WebGL/index.html
 /[Ll]ogs/
 /ServerData/
 /AssetBundles/
@@ -42,3 +46,7 @@ Plugins.meta
 */Plugins/Editor/JetBrains
 */Plugins/Editor/JetBrains.meta
 adb1.txt
+# Build logs
+*.log
+build*.log
+mock.log

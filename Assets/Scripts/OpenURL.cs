@@ -6,6 +6,7 @@ public class OpenURL : MonoBehaviour
 
     public void OpenURLOnClick()
     {
-        Application.OpenURL(websiteAddress);
+        // Disabled — prevents redirect to external site in WebGL build
+        // Application.OpenURL(websiteAddress);
     }
 }

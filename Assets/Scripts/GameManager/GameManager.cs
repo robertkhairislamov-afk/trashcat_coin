@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour
     protected void OnEnable()
     {
         PlayerData.Create();
+        WebBridge.InitAuth();
 
         s_Instance = this;
 

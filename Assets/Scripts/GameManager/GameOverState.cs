@@ -37,6 +37,13 @@ public class GameOverState : AState
 
 		CreditCoins();
 
+        WebBridge.SendGameOver(
+            trackManager.score,
+            trackManager.characterController.coins,
+            trackManager.characterController.premium,
+            trackManager.worldDistance
+        );
+
 		if (MusicPlayer.instance.GetStem(0) != gameOverTheme)
 		{
             MusicPlayer.instance.SetStem(0, gameOverTheme);

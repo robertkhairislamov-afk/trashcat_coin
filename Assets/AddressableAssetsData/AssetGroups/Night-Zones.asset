@@ -11,7 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
   m_Name: Night-Zones
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   m_GroupName: Night-Zones
   m_Data:
     m_SerializedData: []
@@ -27,6 +27,90 @@ MonoBehaviour:
     m_SerializedLabels: []
   - m_GUID: e0111592503a61a4ca2df256d083d305
     m_Address: Assets/Bundles/Themes/NightTime/Suburbs
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: baf31dc160e3099428326b5a83db46cd
+    m_Address: NightIndustrialWarehouse01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 7f9eed4d340d06141a3c57dc69d8ed2c
+    m_Address: NightIndustrialWarehouse02
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 6b55f4706bf1aa048a56792177cb63dc
+    m_Address: NightIndustrialWarehouse03
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 226b344b8bdac594ea142309336337fe
+    m_Address: NightSuburbsGarage01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 49aa51c23aae1814da08106efff9839f
+    m_Address: NightSuburbsHouse01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 654b47fe18f35714aaf36bfa70b02983
+    m_Address: NightSuburbsHouse02
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: b27a4d1577ea1bd4f8a7f3dce60bf85c
+    m_Address: NightSuburbsHouse03
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: fd02fb81cd8dfa94fb3811b38b78b386
+    m_Address: NightUrbanBrickWalls01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 10f2606a4e949f5489f1ce27b91600df
+    m_Address: NightUrbanBrickWalls02
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 4add46b17d5814744bb1498b198ed25d
+    m_Address: NightUrbanBrickWalls03
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: ed24d8dd91f5c544c8df6d3cf6dffc4c
+    m_Address: NightUrbanBuilding01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: de7a496cae0fcec4ead023eb1ebf6257
+    m_Address: NightUrbanBuilding02
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: fee9019dfd7946b40892dcef5d3fcc42
+    m_Address: NightUrbanBuilding03
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: e01ea15bda91ee542a24f9c6f54bf6d3
+    m_Address: NightUrbanBuilding04
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 5d29e217ab3c1874d8d99169dabbbe35
+    m_Address: NightUrbanDumpsters01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: e7a3bd1684c9dc34895c2b9f97f1aeae
+    m_Address: NightUrbanDumpsters02
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 5bc3c5bd95058764489501ac1024b7ea
+    m_Address: NightUrbanPlasterWalls01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 9a4b7a23296b48b4981881bd17953ed7
+    m_Address: NightUrbanPlasterWalls02
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: ee7969661b2b1e94891b8593e383883d
+    m_Address: NightUrbanPlasterWalls03
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 2ff30b5076d96ac4eb9ef7bf11a1bf5b
+    m_Address: NightUrbanRoadIntersection
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 24e342794dd5ea94fa4836beedc3a776
+    m_Address: NightUrbanRoadTSection
     m_ReadOnly: 0
     m_SerializedLabels: []
   m_ReadOnly: 0

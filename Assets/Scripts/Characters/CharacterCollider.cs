@@ -112,6 +112,7 @@ public class CharacterCollider : MonoBehaviour
 				Addressables.ReleaseInstance(c.gameObject);
                 PlayerData.instance.premium += 1;
                 controller.premium += 1;
+                WebBridge.SendCoin(PlayerData.instance.premium, 0, true);
 				m_Audio.PlayOneShot(premiumSound);
 			}
             else
@@ -119,6 +120,7 @@ public class CharacterCollider : MonoBehaviour
 				Coin.coinPool.Free(c.gameObject);
                 PlayerData.instance.coins += 1;
 				controller.coins += 1;
+                WebBridge.SendCoin(PlayerData.instance.coins, 0, false);
 				m_Audio.PlayOneShot(coinSound);
             }
         }

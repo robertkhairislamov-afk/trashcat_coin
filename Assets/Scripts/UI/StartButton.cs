@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -11,8 +11,24 @@ using UnityEngine.Purchasing;
 
 public class StartButton : MonoBehaviour
 {
+    private bool m_Started = false;
+
+    void Update()
+    {
+        if (m_Started) return;
+
+        // Click or tap anywhere to start
+        if (Input.GetMouseButtonDown(0) || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began))
+        {
+            StartGame();
+        }
+    }
+
     public void StartGame()
     {
+        if (m_Started) return;
+        m_Started = true;
+
         if (PlayerData.instance.ftueLevel == 0)
         {
             PlayerData.instance.ftueLevel = 1;
