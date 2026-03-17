@@ -2,11 +2,6 @@
 /[Tt]emp/
 /[Oo]bj/
 /[Bb]uilds/
-# Keep Build/WebGL/server.py and mock_backend.py but ignore actual build output
-/[Bb]uild/WebGL/Build/
-/[Bb]uild/WebGL/StreamingAssets/
-/[Bb]uild/WebGL/TemplateData/
-/[Bb]uild/WebGL/index.html
 /[Ll]ogs/
 /ServerData/
 /AssetBundles/
